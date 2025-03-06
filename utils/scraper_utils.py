@@ -17,26 +17,26 @@ from utils.data_utils import is_complete_venue, is_duplicate_venue
 def get_browser_config() -> BrowserConfig:
     # https://docs.crawl4ai.com/core/browser-crawler-config/
     return BrowserConfig(
-        browser_type="chromium",  # Type of browser to simulate
-        headless=False,  # Whether to run in headless mode (no GUI)
-        verbose=True,  # Enable verbose logging
+        browser_type="chromium",  
+        headless=False,
+        verbose=True,
     )
 
 
 def get_llm_strategy() -> LLMExtractionStrategy:
     # https://docs.crawl4ai.com/api/strategies/#llmextractionstrategy
     return LLMExtractionStrategy(
-        provider="groq/deepseek-r1-distill-llama-70b",  # Name of the LLM provider
-        api_token=os.getenv("GROQ_API_KEY"),  # API token for authentication
-        schema=Venue.model_json_schema(),  # JSON schema of the data model
-        extraction_type="schema",  # Type of extraction to perform
+        provider="groq/deepseek-r1-distill-llama-70b", 
+        api_token=os.getenv("GROQ_API_KEY"), 
+        schema=Venue.model_json_schema(), 
+        extraction_type="schema", 
         instruction=(
             "Extract all venues objects with 'name', "
             "'title', 'study_program', and 'research_interests' from the "
             "following content. Return as a JSON array."
-        ),  # Instructions for the LLM
-        input_format="markdown",  # Format of the input content
-        verbose=True,  # Enable verbose logging
+        ), 
+        input_format="markdown", 
+        verbose=True, 
     )
 
 
@@ -45,7 +45,6 @@ async def check_no_results(
     url: str,
     session_id: str,
 ) -> bool:
-    # Fetch the page without any CSS selector or extraction strategy
     result = await crawler.arun(
         url=url,
         config=CrawlerRunConfig(
@@ -75,17 +74,16 @@ async def fetch_and_process_page(
     required_keys: List[str],
     seen_names: Set[str],
 ) -> Tuple[List[dict], bool]:
-    url = base_url  # Remove pagination parameter
+    url = base_url 
     print(f"Loading page {page_number}...")
 
-    # Fetch page content with the extraction strategy
     result = await crawler.arun(
         url=url,
         config=CrawlerRunConfig(
-            cache_mode=CacheMode.BYPASS,  # Do not use cached data
-            extraction_strategy=llm_strategy,  # Strategy for data extraction
-            css_selector=css_selector,  # Target specific content on the page
-            session_id=session_id,  # Unique session ID for the crawl
+            cache_mode=CacheMode.BYPASS, 
+            extraction_strategy=llm_strategy, 
+            css_selector=css_selector,  
+            session_id=session_id,
         ),
     )
 
@@ -93,33 +91,27 @@ async def fetch_and_process_page(
         print(f"Error fetching page {page_number}: {result.error_message}")
         return [], False
 
-    # Parse extracted content
     extracted_data = json.loads(result.extracted_content)
     if not extracted_data:
         print(f"No venues found on page {page_number}.")
         return [], False
 
-    # After parsing extracted content
     print("Extracted data:", extracted_data)
 
-    # Process venues
     complete_venues = []
     for venue in extracted_data:
-        # Debugging: Print each venue to understand its structure
         print("Processing venue:", venue)
 
-        # Ignore the 'error' key if it's False
         if venue.get("error") is False:
-            venue.pop("error", None)  # Remove the 'error' key if it's False
+            venue.pop("error", None)  
 
         if not is_complete_venue(venue, required_keys):
-            continue  # Skip incomplete venues
+            continue
 
         if is_duplicate_venue(venue["name"], seen_names):
             print(f"Duplicate venue '{venue['name']}' found. Skipping.")
-            continue  # Skip duplicate venues
+            continue
 
-        # Add venue to the list
         seen_names.add(venue["name"])
         complete_venues.append(venue)
 
@@ -128,4 +120,4 @@ async def fetch_and_process_page(
         return [], False
 
     print(f"Extracted {len(complete_venues)} venues from page {page_number}.")
-    return complete_venues, False  # Continue crawling
+    return complete_venues, False
