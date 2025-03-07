@@ -1,27 +1,27 @@
 # Web Scraper no Pagination
 
-## 📌 Cara Penggunaan
+## Cara Penggunaan
 
-### 1️⃣ Buat Environment Python (Conda / venv)
+### Buat Environment Python (Conda / venv)
 ```bash
 # Menggunakan Conda
 conda create -n "nama_projek" python=3.13 
 conda activate nama_projek
 ```
 
-### 2️⃣ Install Library
+### Install Library
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Eksekusi !!
+###  Eksekusi !!
 ```bash
 python main.py
 ```
 
 ---
 
-## ⚙️ Penyesuaian Konfigurasi
+##  Penyesuaian Konfigurasi
 
 1. Edit parameter di **venue.py** dan **config.py**.
 2. Edit file **scraper_utils.py**, sesuaikan:
@@ -29,5 +29,5 @@ python main.py
    - API token **GROQ**
    - Instruksi untuk **LLM**
 
-🚀 Selamat mencoba! Jika ada masalah, silakan ajukan issue di repository ini. 😊
+Selamat mencoba! Jika ada masalah, silakan ajukan issue di repository ini. 😊
 
