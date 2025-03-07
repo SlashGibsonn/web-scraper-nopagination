@@ -29,5 +29,4 @@ python main.py
    - API token **GROQ**
    - Instruksi untuk **LLM**
 
-Selamat mencoba! Jika ada masalah, silakan ajukan issue di repository ini. 😊
 
